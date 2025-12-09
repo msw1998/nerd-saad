@@ -24,8 +24,8 @@
   </style>
 </head>
 <body>
-  <h1>⚡ NerdMiner v2 Flasher</h1>
-  <p>Flash your custom NerdMiner_v2 to the Cheap Yellow Display (ESP32-2432S028R). Connect via USB-C, click below, select the port, and watch the magic. Takes ~30-60 seconds.</p>
+  <h1>⚡ HomeMiner v2 Flasher</h1>
+  <p>Flash your custom HomeMiner to the device. Connect via USB-C, click below, select the port, and watch the magic. Takes ~30-60 seconds.</p>
   
   <div class="tip">
     <strong>Tip:</strong> If your board doesn't enter flash mode, hold BOOT (bottom-left button) while plugging in USB.
@@ -34,7 +34,6 @@
   <esp-web-install-button manifest="firmware/manifest.json">
     <button slot="activate">🚀 Install Firmware</button>
     <span slot="unsupported">Your browser doesn't support Web Serial (use Chrome/Edge desktop).</span>
-    <span slot="not-allowed">HTTPS required – reload on GitHub Pages/Netlify.</span>
     <div slot="progress-container">
       <progress max="100" value="0"></progress>
       <p>Flashing... <span id="progress-text">0%</span></p>
