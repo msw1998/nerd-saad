@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NerdMiner v2 Web Flasher</title>
+  <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+  <style>
+    body { 
+      font-family: 'Courier New', monospace; 
+      text-align: center; 
+      padding: 50px; 
+      background: linear-gradient(135deg, #000, #001122); 
+      color: #fff; 
+      min-height: 100vh;
+    }
+    h1 { color: #ffcc00; font-size: 2.5em; text-shadow: 0 0 10px #ffcc00; }
+    p { max-width: 600px; margin: 20px auto; line-height: 1.5; }
+    esp-web-install-button { 
+      --esp-tools-button-color: #ffcc00; 
+      --esp-tools-button-text-color: #000;
+      --esp-tools-progress-bar-color: #ffcc00;
+    }
+    .tip { background: rgba(255,204,0,0.1); border: 1px solid #ffcc00; padding: 15px; border-radius: 10px; margin: 20px auto; max-width: 500px; }
+  </style>
+</head>
+<body>
+  <h1>⚡ NerdMiner v2 Flasher</h1>
+  <p>Flash your custom NerdMiner_v2 to the Cheap Yellow Display (ESP32-2432S028R). Connect via USB-C, click below, select the port, and watch the magic. Takes ~30-60 seconds.</p>
+  
+  <div class="tip">
+    <strong>Tip:</strong> If your board doesn't enter flash mode, hold BOOT (bottom-left button) while plugging in USB.
+  </div>
+  
+  <esp-web-install-button manifest="firmware/manifest.json">
+    <button slot="activate">🚀 Install Firmware</button>
+    <span slot="unsupported">Your browser doesn't support Web Serial (use Chrome/Edge desktop).</span>
+    <span slot="not-allowed">HTTPS required – reload on GitHub Pages/Netlify.</span>
+    <div slot="progress-container">
+      <progress max="100" value="0"></progress>
+      <p>Flashing... <span id="progress-text">0%</span></p>
+    </div>
+  </esp-web-install-button>
+  
+  <p style="margin-top: 30px; font-size: 0.9em; opacity: 0.8;">
+    Built with ❤️ for Bitcoin lottery miners. After flashing, reset config by holding RESET 5s.
+  </p>
+  
+  <script>
+    // Optional: Custom progress hook (if you want fancy logging)
+    document.addEventListener('esp-web-install-progress', (e) => {
+      const progress = document.querySelector('progress');
+      const text = document.getElementById('progress-text');
+      if (progress && text) {
+        progress.value = e.detail.progress;
+        text.textContent = `${Math.round(e.detail.progress)}%`;
+      }
+    });
+  </script>
+</body>
+</html>
