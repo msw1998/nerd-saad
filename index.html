@@ -22,16 +22,34 @@
       color: var(--text);
       min-height: 100vh;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      padding: 20px;
+      padding-top: 80px; /* Space for fixed logo */
+    }
+
+    /* Logo fixed at top-left */
+    .logo {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 100;
+    }
+
+    .logo img {
+      height: 60px;
+      filter: drop-shadow(0 0 8px rgba(255,204,0,0.5));
+      transition: transform 0.3s;
+    }
+
+    .logo img:hover {
+      transform: scale(1.08);
     }
 
     .container {
       background: var(--light);
       border-radius: 16px;
       padding: 40px;
-      max-width: 500px;
+      max-width: 520px;
       width: 100%;
       box-shadow: 0 10px 30px rgba(0,0,0,0.6);
       text-align: center;
@@ -140,9 +158,20 @@
   </style>
 </head>
 <body>
+  <!-- Logo fixed top-left -->
+  <div class="logo">
+<img src="logo.png" alt="HomeMiner Logo" style="
+  height: 150px; 
+  max-height: 150px; 
+  width: auto; 
+  margin-right: 20px; 
+  border-radius: 0px;
+">
+  </div>
+
   <div class="container">
-    <h1>HomeMiner Flasher</h1>
-    <p class="subtitle">Connect your device, select your model, and start flashing immediately. No setup required.</p>
+    <h1>HomeMiner v2 Flasher</h1>
+    <p class="subtitle">Flash your custom firmware to CYD or T-Display</p>
 
     <div class="device-select">
       <label for="device">Select Device</label>
@@ -166,7 +195,7 @@
     </div>
   </div>
 
-  <!-- ESP Web Tools -->
+  <!-- ESP Web Tools (hidden) -->
   <esp-web-install-button manifest="firmware/manifest.json" id="installButton" style="display:none;">
     <span slot="progress-container"></span>
   </esp-web-install-button>
@@ -179,13 +208,11 @@
     const progressEl = document.getElementById('progress');
     const installButton = document.getElementById('installButton');
 
-    // Map device to manifest
     const manifests = {
       cyd: 'firmware/manifest-cyd.json',
       tdisplay: 'firmware/manifest-tdisplay.json'
     };
 
-    // Update manifest when device changes
     deviceSelect.addEventListener('change', () => {
       const selected = deviceSelect.value;
       installButton.setAttribute('manifest', manifests[selected]);
@@ -193,12 +220,10 @@
       flashBtn.disabled = true;
     });
 
-    // Connect button – triggers Web Serial port selection
     connectBtn.addEventListener('click', async () => {
       try {
         statusEl.textContent = 'Connecting...';
         const port = await navigator.serial.requestPort();
-        installButton.setAttribute('port', port); // Not actually needed, but nice
         statusEl.textContent = 'Connected! Ready to flash.';
         flashBtn.disabled = false;
         flashBtn.textContent = 'Flash Firmware';
@@ -208,15 +233,13 @@
       }
     });
 
-    // Flash button – triggers the actual flashing
     flashBtn.addEventListener('click', () => {
       if (installButton) {
         statusEl.textContent = 'Flashing...';
-        installButton.click(); // Triggers the esp-web-install-button
+        installButton.click();
       }
     });
 
-    // Listen to ESP Web Tools events
     document.addEventListener('esp-web-install-progress', (e) => {
       progressEl.value = e.detail.progress;
       statusEl.textContent = `Flashing... ${Math.round(e.detail.progress)}%`;
