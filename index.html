@@ -2,57 +2,234 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>NerdMiner v2 Web Flasher</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HomeMiner v2 Web Flasher</title>
   <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
   <style>
-    body { 
-      font-family: 'Courier New', monospace; 
-      text-align: center; 
-      padding: 50px; 
-      background: linear-gradient(135deg, #000, #001122); 
-      color: #fff; 
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+    :root {
+      --primary: #ffcc00;
+      --dark: #0d1117;
+      --light: #161b22;
+      --text: #c9d1d9;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: var(--dark);
+      color: var(--text);
       min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
     }
-    h1 { color: #ffcc00; font-size: 2.5em; text-shadow: 0 0 10px #ffcc00; }
-    p { max-width: 600px; margin: 20px auto; line-height: 1.5; }
-    esp-web-install-button { 
-      --esp-tools-button-color: #ffcc00; 
-      --esp-tools-button-text-color: #000;
-      --esp-tools-progress-bar-color: #ffcc00;
+
+    .container {
+      background: var(--light);
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      text-align: center;
     }
-    .tip { background: rgba(255,204,0,0.1); border: 1px solid #ffcc00; padding: 15px; border-radius: 10px; margin: 20px auto; max-width: 500px; }
+
+    h1 {
+      color: var(--primary);
+      font-size: 2.4rem;
+      margin: 0 0 10px;
+      text-shadow: 0 0 10px rgba(255,204,0,0.5);
+    }
+
+    .subtitle {
+      color: #8b949e;
+      margin-bottom: 30px;
+    }
+
+    .device-select {
+      margin: 30px 0;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 500;
+      color: #8b949e;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      background: #21262d;
+      color: #fff;
+      border: 1px solid #30363d;
+      font-size: 1rem;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 12px;
+      margin: 30px 0;
+      flex-direction: column;
+    }
+
+    button {
+      padding: 14px 24px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    #connectBtn {
+      background: #238636;
+      color: white;
+    }
+
+    #connectBtn:hover {
+      background: #2ea043;
+    }
+
+    #flashBtn {
+      background: var(--primary);
+      color: #000;
+    }
+
+    #flashBtn:hover {
+      background: #ffdd33;
+    }
+
+    #flashBtn:disabled {
+      background: #444;
+      cursor: not-allowed;
+    }
+
+    .status {
+      margin-top: 20px;
+      min-height: 60px;
+      font-size: 1.1rem;
+    }
+
+    progress {
+      width: 100%;
+      height: 12px;
+      margin: 15px 0;
+      border-radius: 6px;
+      background: #21262d;
+    }
+
+    progress::-webkit-progress-bar { background: #21262d; border-radius: 6px; }
+    progress::-webkit-progress-value { background: var(--primary); border-radius: 6px; }
+
+    .tip {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: #8b949e;
+      background: rgba(255,204,0,0.1);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--primary);
+    }
   </style>
 </head>
 <body>
-  <h1>⚡ HomeMiner v2 Flasher</h1>
-  <p>Flash your custom HomeMiner to the device. Connect via USB-C, click below, select the port, and watch the magic. Takes ~30-60 seconds.</p>
-  
-  <div class="tip">
-    <strong>Tip:</strong> If your board doesn't enter flash mode, hold BOOT (bottom-left button) while plugging in USB.
-  </div>
-  
-  <esp-web-install-button manifest="firmware/manifest.json">
-    <button slot="activate">🚀 Install Firmware</button>
-    <span slot="unsupported">Your browser doesn't support Web Serial (use Chrome/Edge desktop).</span>
-    <div slot="progress-container">
-      <progress max="100" value="0"></progress>
-      <p>Flashing... <span id="progress-text">0%</span></p>
+  <div class="container">
+    <h1>HomeMiner Flasher</h1>
+    <p class="subtitle">Connect your device, select your model, and start flashing immediately. No setup required.</p>
+
+    <div class="device-select">
+      <label for="device">Select Device</label>
+      <select id="device">
+        <option value="cyd">Cheap Yellow Display (ESP32-2432S028R)</option>
+        <option value="tdisplay">T-Display (ESP32)</option>
+      </select>
     </div>
+
+    <div class="buttons">
+      <button id="connectBtn">Connect to Device</button>
+      <button id="flashBtn" disabled>Flash Firmware</button>
+    </div>
+
+    <div class="status" id="status">Waiting for connection...</div>
+
+    <progress id="progress" max="100" value="0"></progress>
+
+    <div class="tip">
+      <strong>Tip:</strong> Hold the BOOT button while plugging in USB if the board doesn’t enter flash mode.
+    </div>
+  </div>
+
+  <!-- ESP Web Tools -->
+  <esp-web-install-button manifest="firmware/manifest.json" id="installButton" style="display:none;">
+    <span slot="progress-container"></span>
   </esp-web-install-button>
-  
-  <p style="margin-top: 30px; font-size: 0.9em; opacity: 0.8;">
-    Built with ❤️ for Bitcoin lottery miners. After flashing, reset config by holding RESET 5s.
-  </p>
-  
+
   <script>
-    // Optional: Custom progress hook (if you want fancy logging)
-    document.addEventListener('esp-web-install-progress', (e) => {
-      const progress = document.querySelector('progress');
-      const text = document.getElementById('progress-text');
-      if (progress && text) {
-        progress.value = e.detail.progress;
-        text.textContent = `${Math.round(e.detail.progress)}%`;
+    const deviceSelect = document.getElementById('device');
+    const connectBtn = document.getElementById('connectBtn');
+    const flashBtn = document.getElementById('flashBtn');
+    const statusEl = document.getElementById('status');
+    const progressEl = document.getElementById('progress');
+    const installButton = document.getElementById('installButton');
+
+    // Map device to manifest
+    const manifests = {
+      cyd: 'firmware/manifest-cyd.json',
+      tdisplay: 'firmware/manifest-tdisplay.json'
+    };
+
+    // Update manifest when device changes
+    deviceSelect.addEventListener('change', () => {
+      const selected = deviceSelect.value;
+      installButton.setAttribute('manifest', manifests[selected]);
+      statusEl.textContent = `Selected: ${deviceSelect.options[deviceSelect.selectedIndex].text}`;
+      flashBtn.disabled = true;
+    });
+
+    // Connect button – triggers Web Serial port selection
+    connectBtn.addEventListener('click', async () => {
+      try {
+        statusEl.textContent = 'Connecting...';
+        const port = await navigator.serial.requestPort();
+        installButton.setAttribute('port', port); // Not actually needed, but nice
+        statusEl.textContent = 'Connected! Ready to flash.';
+        flashBtn.disabled = false;
+        flashBtn.textContent = 'Flash Firmware';
+      } catch (err) {
+        statusEl.textContent = 'Connection failed. Try again.';
+        console.error(err);
       }
+    });
+
+    // Flash button – triggers the actual flashing
+    flashBtn.addEventListener('click', () => {
+      if (installButton) {
+        statusEl.textContent = 'Flashing...';
+        installButton.click(); // Triggers the esp-web-install-button
+      }
+    });
+
+    // Listen to ESP Web Tools events
+    document.addEventListener('esp-web-install-progress', (e) => {
+      progressEl.value = e.detail.progress;
+      statusEl.textContent = `Flashing... ${Math.round(e.detail.progress)}%`;
+    });
+
+    document.addEventListener('esp-web-install-success', () => {
+      statusEl.textContent = 'Flash complete! Device will reboot.';
+      progressEl.value = 100;
+    });
+
+    document.addEventListener('esp-web-install-error', (e) => {
+      statusEl.textContent = 'Flash failed: ' + e.detail.message;
+      progressEl.value = 0;
     });
   </script>
 </body>
