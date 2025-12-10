@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="logo.png">
-
   <title>HomeMiner v2 Web Flasher</title>
   <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
   <style>
@@ -26,10 +25,9 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding-top: 80px; /* Space for fixed logo */
+      padding-top: 80px;
     }
 
-    /* Logo fixed at top-left */
     .logo {
       position: fixed;
       top: 20px;
@@ -38,14 +36,12 @@
     }
 
     .logo img {
-      height: 60px;
-      filter: drop-shadow(0 0 8px rgba(255,204,0,0.5));
+      height: 90px;
+      filter: drop-shadow(0 0 12px rgba(255,204,0,0.6));
       transition: transform 0.3s;
     }
 
-    .logo img:hover {
-      transform: scale(1.08);
-    }
+    .logo img:hover { transform: scale(1.08); }
 
     .container {
       background: var(--light);
@@ -57,94 +53,21 @@
       text-align: center;
     }
 
-    h1 {
-      color: var(--primary);
-      font-size: 2.4rem;
-      margin: 0 0 10px;
-      text-shadow: 0 0 10px rgba(255,204,0,0.5);
-    }
+    h1 { color: var(--primary); font-size: 2.4rem; margin: 0 0 10px; text-shadow: 0 0 10px rgba(255,204,0,0.5); }
+    .subtitle { color: #8b949e; margin-bottom: 30px; }
 
-    .subtitle {
-      color: #8b949e;
-      margin-bottom: 30px;
-    }
+    .device-select { margin: 30px 0; text-align: left; }
+    label { display: block; margin-bottom: 10px; font-weight: 500; color: #8b949e; }
+    select { width: 100%; padding: 12px; border-radius: 8px; background: #21262d; color: #fff; border: 1px solid #30363d; font-size: 1rem; }
 
-    .device-select {
-      margin: 30px 0;
-      text-align: left;
-    }
+    .buttons { display: flex; gap: 12px; margin: 30px 0; flex-direction: column; }
+    button { padding: 14px 24px; font-size: 1.1rem; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+    #flashBtn { background: var(--primary); color: #000; }
+    #flashBtn:hover { background: #ffdd33; }
+    #flashBtn:disabled { background: #444; cursor: not-allowed; }
 
-    label {
-      display: block;
-      margin-bottom: 10px;
-      font-weight: 500;
-      color: #8b949e;
-    }
-
-    select {
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      background: #21262d;
-      color: #fff;
-      border: 1px solid #30363d;
-      font-size: 1rem;
-    }
-
-    .buttons {
-      display: flex;
-      gap: 12px;
-      margin: 30px 0;
-      flex-direction: column;
-    }
-
-    button {
-      padding: 14px 24px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    #connectBtn {
-      background: #238636;
-      color: white;
-    }
-
-    #connectBtn:hover {
-      background: #2ea043;
-    }
-
-    #flashBtn {
-      background: var(--primary);
-      color: #000;
-    }
-
-    #flashBtn:hover {
-      background: #ffdd33;
-    }
-
-    #flashBtn:disabled {
-      background: #444;
-      cursor: not-allowed;
-    }
-
-    .status {
-      margin-top: 20px;
-      min-height: 60px;
-      font-size: 1.1rem;
-    }
-
-    progress {
-      width: 100%;
-      height: 12px;
-      margin: 15px 0;
-      border-radius: 6px;
-      background: #21262d;
-    }
-
+    .status { margin-top: 20px; min-height: 60px; font-size: 1.1rem; }
+    progress { width: 100%; height: 12px; margin: 15px 0; border-radius: 6px; background: #21262d; }
     progress::-webkit-progress-bar { background: #21262d; border-radius: 6px; }
     progress::-webkit-progress-value { background: var(--primary); border-radius: 6px; }
 
@@ -162,13 +85,7 @@
 <body>
   <!-- Logo fixed top-left -->
   <div class="logo">
-<img src="logo.png" alt="HomeMiner Logo" style="
-  height: 150px; 
-  max-height: 150px; 
-  width: auto; 
-  margin-right: 20px; 
-  border-radius: 0px;
-">
+    <img src="logo.png" alt="HomeMiner Logo">
   </div>
 
   <div class="container">
@@ -184,77 +101,55 @@
     </div>
 
     <div class="buttons">
-      <button id="connectBtn">Connect to Device</button>
-      <button id="flashBtn" disabled>Flash Firmware</button>
+      <esp-web-install-button id="installButton" manifest="firmware/manifest.json" >
+        <button slot="activate">Flash Firmware</button>
+        <span slot="unsupported">Your browser doesn't support Web Serial (use Chrome/Edge desktop).</span>
+        <div slot="progress-container">
+          <progress max="100" value="0"></progress>
+          <p>Flashing... <span id="progress-text">0%</span></p>
+        </div>
+      </esp-web-install-button>
     </div>
 
-    <div class="status" id="status">Waiting for connection...</div>
-
-    <progress id="progress" max="100" value="0"></progress>
+    <div class="status" id="status">Select device and click Flash</div>
 
     <div class="tip">
       <strong>Tip:</strong> Hold the BOOT button while plugging in USB if the board doesn’t enter flash mode.
     </div>
   </div>
 
-  <!-- ESP Web Tools (hidden) -->
-  <esp-web-install-button manifest="firmware/manifest.json" id="installButton" style="display:none;">
-    <span slot="progress-container"></span>
-  </esp-web-install-button>
-
   <script>
     const deviceSelect = document.getElementById('device');
-    const connectBtn = document.getElementById('connectBtn');
-    const flashBtn = document.getElementById('flashBtn');
-    const statusEl = document.getElementById('status');
-    const progressEl = document.getElementById('progress');
     const installButton = document.getElementById('installButton');
+    const statusEl = document.getElementById('status');
+    const progressText = document.getElementById('progress-text');
 
     const manifests = {
-      cyd: 'firmware/manifest-cyd.json',
+      cyd: 'firmware/manifest.json',
       tdisplay: 'firmware/manifest-tdisplay.json'
     };
 
+    // Change manifest when user selects different device
     deviceSelect.addEventListener('change', () => {
       const selected = deviceSelect.value;
       installButton.setAttribute('manifest', manifests[selected]);
-      statusEl.textContent = `Selected: ${deviceSelect.options[deviceSelect.selectedIndex].text}`;
-      flashBtn.disabled = true;
+      statusEl.textContent = `Ready to flash ${deviceSelect.options[deviceSelect.selectedIndex].text} ${manifests[selected]}`;
     });
 
-    connectBtn.addEventListener('click', async () => {
-      try {
-        statusEl.textContent = 'Connecting...';
-        const port = await navigator.serial.requestPort();
-        statusEl.textContent = 'Connected! Ready to flash.';
-        flashBtn.disabled = false;
-        flashBtn.textContent = 'Flash Firmware';
-      } catch (err) {
-        statusEl.textContent = 'Connection failed. Try again.';
-        console.error(err);
-      }
-    });
-
-    flashBtn.addEventListener('click', () => {
-      if (installButton) {
-        statusEl.textContent = 'Flashing...';
-        installButton.click();
-      }
-    });
-
+    // Progress hook (same as your working code)
     document.addEventListener('esp-web-install-progress', (e) => {
-      progressEl.value = e.detail.progress;
+      progressText.textContent = `${Math.round(e.detail.progress)}%`;
       statusEl.textContent = `Flashing... ${Math.round(e.detail.progress)}%`;
     });
 
     document.addEventListener('esp-web-install-success', () => {
       statusEl.textContent = 'Flash complete! Device will reboot.';
-      progressEl.value = 100;
+      progressText.textContent = '100%';
     });
 
     document.addEventListener('esp-web-install-error', (e) => {
-      statusEl.textContent = 'Flash failed: ' + e.detail.message;
-      progressEl.value = 0;
+      statusEl.textContent = 'Flash failed: ' + (e.detail.message || 'Unknown error');
+      progressText.textContent = '0%';
     });
   </script>
 </body>
