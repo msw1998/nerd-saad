@@ -133,7 +133,7 @@
     deviceSelect.addEventListener('change', () => {
       const selected = deviceSelect.value;
       installButton.setAttribute('manifest', manifests[selected]);
-      statusEl.textContent = `Ready to flash ${deviceSelect.options[deviceSelect.selectedIndex].text} ${manifests[selected]}`;
+      statusEl.textContent = `Ready to flash ${deviceSelect.options[deviceSelect.selectedIndex].text}`;
     });
 
     // Progress hook (same as your working code)
