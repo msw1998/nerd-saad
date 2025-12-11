@@ -90,13 +90,13 @@
 
   <div class="container">
     <h1>HomeMiner Flasher</h1>
-    <p class="subtitle">Flash your custom firmware to CYD or T-Display</p>
+    <p class="subtitle">Flash your custom firmware to CYD or T3-Display</p>
 
     <div class="device-select">
       <label for="device">Select Device</label>
       <select id="device">
-        <option value="cyd">Cheap Yellow Display (ESP32-2432S028R)</option>
-        <option value="tdisplay">T-Display (ESP32)</option>
+        <option value="cyd">Home Miner CYD (ESP32-2432S028R)</option>
+        <option value="tdisplay">Home Miner T3 (T-Display S3)</option>
       </select>
     </div>
 
@@ -126,7 +126,7 @@
 
     const manifests = {
       cyd: 'firmware/manifest.json',
-      tdisplay: 'firmware/manifest-tdisplay.json'
+      tdisplay: 'firmware/tdisplay/manifest.json'
     };
 
     // Change manifest when user selects different device
