@@ -66,6 +66,19 @@
     #flashBtn:hover { background: #ffdd33; }
     #flashBtn:disabled { background: #444; cursor: not-allowed; }
 
+
+    /* New "Visit HomeMiner" button */
+    #visitBtn {
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+      font-weight: 600;
+      margin-top: 20px;
+    }
+    #visitBtn:hover {
+      background: var(--primary);
+      color: #000;
+    }
     .status { margin-top: 20px; min-height: 60px; font-size: 1.1rem; }
     progress { width: 100%; height: 12px; margin: 15px 0; border-radius: 6px; background: #21262d; }
     progress::-webkit-progress-bar { background: #21262d; border-radius: 6px; }
@@ -117,7 +130,9 @@
       <strong>Tip:</strong> Hold the BOOT button while plugging in USB if the board doesn’t enter flash mode.
     </div>
   </div>
-
+  <button id="visitBtn" onclick="window.open('https://homeminer.co.uk', '_blank')">
+      Visit HomeMiner.co.uk
+  </button>
   <script>
     const deviceSelect = document.getElementById('device');
     const installButton = document.getElementById('installButton');
